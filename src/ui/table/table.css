@@ -1,0 +1,148 @@
+/* Tavolo e seat */
+.table {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  max-height: 62dvh;
+  margin: 0 auto;
+}
+@media (min-width: 720px) {
+  .table {
+    aspect-ratio: 4 / 3;
+    max-height: 70dvh;
+    max-width: 960px;
+  }
+}
+
+.table-felt {
+  position: absolute;
+  inset: 16% 14% 8%;
+  border-radius: 50% / 40%;
+  background: radial-gradient(ellipse at 50% 40%, var(--felt-600), var(--felt-700) 70%);
+  border: 6px solid var(--felt-900);
+  box-shadow:
+    inset 0 0 40px rgba(0, 0, 0, 0.35),
+    0 10px 30px rgba(0, 0, 0, 0.35);
+}
+@media (min-width: 720px) {
+  .table-felt {
+    inset: 12% 10%;
+    border-radius: 50% / 50%;
+  }
+}
+
+.table-center {
+  position: absolute;
+  left: 50%;
+  top: 47%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  width: 80%;
+}
+.table-pot {
+  color: var(--paper-200);
+}
+.table-pot-n {
+  color: var(--ochre-400);
+  font-size: var(--text-md);
+}
+.table-board {
+  display: flex;
+  gap: 6px;
+  min-height: 74px;
+  align-items: center;
+  justify-content: center;
+}
+.table-board-empty {
+  opacity: 0.5;
+}
+
+/* Seat */
+.seat {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 84px;
+  transition: opacity var(--dur-med);
+}
+.seat-out {
+  opacity: 0.35;
+}
+.seat-folded .seat-plate {
+  opacity: 0.5;
+}
+.seat-cards {
+  display: flex;
+  gap: 3px;
+}
+.seat-human .seat-cards {
+  gap: 8px;
+  margin-bottom: -6px;
+}
+.seat-plate {
+  background: var(--felt-900);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  padding: 4px 10px;
+  text-align: center;
+  min-width: 84px;
+  transition: border-color var(--dur-fast), box-shadow var(--dur-fast);
+}
+.seat-acting .seat-plate {
+  border-color: var(--ochre-500);
+  box-shadow: 0 0 0 3px rgba(232, 184, 58, 0.25);
+  animation: seat-pulse 1.2s ease-in-out infinite;
+}
+.seat-winner .seat-plate {
+  border-color: var(--ok);
+}
+@keyframes seat-pulse {
+  50% {
+    box-shadow: 0 0 0 6px rgba(232, 184, 58, 0.12);
+  }
+}
+.seat-name {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.seat-button {
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--paper-100);
+  color: var(--ink-900);
+  font: 700 11px var(--font-mono);
+}
+.seat-stack {
+  font-size: var(--text-sm);
+  color: var(--ochre-400);
+}
+.seat-bet {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--text-xs);
+  background: rgba(0, 0, 0, 0.35);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+.chip {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--chip-red);
+  border: 2px dashed var(--paper-100);
+  box-sizing: border-box;
+}

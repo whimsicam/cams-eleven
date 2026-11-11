@@ -1,0 +1,98 @@
+/*
+ * Design token di cam's eleven — derivati dal poster di riferimento (docs/reference/01-full-house.png).
+ * Documentazione: docs/design-system.md. Cambiare qui cambia tutta l'app.
+ */
+:root {
+  /* Colori: verde feltro, crema carta, inchiostro, corallo (cuori/quadri e accento), ocra (marker) */
+  --felt-900: #163a2c;
+  --felt-800: #1f4d3a;
+  --felt-700: #27604a;
+  --felt-600: #2f7358;
+  --felt-line: rgba(255, 247, 224, 0.1);
+
+  --paper-100: #fff7e0;
+  --paper-200: #f3e9cd;
+  --paper-300: #e3d6b4;
+  --paper-400: #c9bb97;
+
+  --ink-900: #161512;
+  --ink-700: #2b2925;
+  --ink-500: #5a564d;
+
+  --coral-500: #f1623f;
+  --coral-400: #f98160;
+  --coral-600: #cf4b2b;
+
+  --ochre-500: #e8b83a;
+  --ochre-400: #f2cd6b;
+
+  --chip-white: #f5f0e4;
+  --chip-red: #d8402b;
+  --chip-blue: #2c5aa0;
+  --chip-green: #2f8f5b;
+  --chip-black: #1c1c1c;
+
+  /* Semantici */
+  --bg: var(--felt-800);
+  --bg-deep: var(--felt-900);
+  --surface: var(--felt-700);
+  --surface-raised: var(--felt-600);
+  --text: var(--paper-100);
+  --text-muted: var(--paper-400);
+  --accent: var(--coral-500);
+  --accent-strong: var(--coral-600);
+  --warn: var(--ochre-500);
+  --ok: #7cd39a;
+  --danger: #ff6b5e;
+  --card-face: var(--paper-100);
+  --card-ink: var(--ink-900);
+  --card-red: var(--coral-500);
+  --suit-black: var(--ink-900);
+  --suit-red: var(--coral-500);
+
+  /* Tipografia */
+  --font-display: "Archivo Black", "Space Grotesk", system-ui, sans-serif;
+  --font-ui: "Space Grotesk", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.75rem;
+  --text-2xl: 2.5rem;
+
+  /* Spazi e forme */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-card: 10px;
+
+  /* Touch target minimo (iPhone) */
+  --tap: 48px;
+
+  /* Animazioni */
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-spring: cubic-bezier(0.3, 1.35, 0.5, 1);
+  --dur-fast: 140ms;
+  --dur-med: 260ms;
+  --dur-slow: 480ms;
+
+  /* Safe area iPhone */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0ms;
+    --dur-med: 0ms;
+    --dur-slow: 0ms;
+  }
+}

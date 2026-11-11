@@ -1,0 +1,169 @@
+/* Stili globali: reset leggero, tipografia, griglia "blueprint" del fondo, componenti di base. */
+@import "./tokens.css";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background-color: var(--bg);
+  /* Griglia sottile come nel poster di riferimento */
+  background-image:
+    linear-gradient(var(--felt-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--felt-line) 1px, transparent 1px);
+  background-size: 28px 28px;
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: var(--text-md);
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+  /* Niente selezione accidentale del testo mentre si tocca il tavolo */
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.05;
+  margin: 0;
+}
+
+h1 {
+  font-size: var(--text-2xl);
+}
+h2 {
+  font-size: var(--text-xl);
+}
+h3 {
+  font-size: var(--text-lg);
+  font-family: var(--font-ui);
+  font-weight: 700;
+}
+
+p {
+  margin: 0 0 var(--space-3);
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.muted {
+  color: var(--text-muted);
+}
+
+/* Etichetta tecnica stile poster: monospace, piccola, maiuscola */
+.label {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* Pulsanti */
+.btn {
+  appearance: none;
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  min-height: var(--tap);
+  padding: 0 var(--space-4);
+  font: 600 var(--text-md) var(--font-ui);
+  color: var(--text);
+  background: var(--surface-raised);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  transition:
+    transform var(--dur-fast) var(--ease-out),
+    background var(--dur-fast),
+    opacity var(--dur-fast);
+  touch-action: manipulation;
+}
+.btn:active {
+  transform: scale(0.97);
+}
+.btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.btn-primary {
+  background: var(--accent);
+  color: var(--ink-900);
+}
+.btn-paper {
+  background: var(--paper-100);
+  color: var(--ink-900);
+}
+.btn-ghost {
+  background: transparent;
+  border-color: var(--paper-400);
+}
+.btn-block {
+  width: 100%;
+}
+
+/* Input */
+.input {
+  width: 100%;
+  min-height: var(--tap);
+  border-radius: var(--radius-md);
+  border: 2px solid var(--felt-600);
+  background: var(--felt-900);
+  color: var(--text);
+  padding: 0 var(--space-3);
+  font: var(--text-md) var(--font-mono);
+  -webkit-user-select: text;
+  user-select: text;
+}
+.input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* Card di contenuto (pannelli) */
+.panel {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  border: 1px solid rgba(255, 247, 224, 0.08);
+}
+
+/* Badge numerico (es. "01", "+3 700") come nel poster */
+.badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--ochre-500);
+  color: var(--ink-900);
+  letter-spacing: 0.06em;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

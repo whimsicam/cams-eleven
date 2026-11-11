@@ -1,0 +1,65 @@
+.app {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+.app-main {
+  flex: 1;
+  padding-bottom: calc(64px + var(--safe-bottom));
+}
+
+/* Tab bar fissa in basso, sopra la safe area dell'iPhone */
+.tabbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: var(--felt-900);
+  border-top: 1px solid rgba(255, 247, 224, 0.12);
+  padding-bottom: var(--safe-bottom);
+  z-index: 10;
+  transition: opacity var(--dur-med);
+}
+.tabbar-quiet {
+  opacity: 0.6;
+}
+.tab {
+  appearance: none;
+  background: none;
+  border: 0;
+  color: var(--text-muted);
+  min-height: 56px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font: 600 var(--text-xs) var(--font-ui);
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.tab-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+.tab-active {
+  color: var(--coral-400);
+}
+
+@media (min-width: 720px) {
+  .tabbar {
+    position: sticky;
+    top: 0;
+    bottom: auto;
+    order: -1;
+    grid-template-columns: repeat(4, 160px);
+    justify-content: center;
+    border-top: 0;
+    border-bottom: 1px solid rgba(255, 247, 224, 0.12);
+  }
+  .app-main {
+    padding-bottom: var(--space-6);
+  }
+}

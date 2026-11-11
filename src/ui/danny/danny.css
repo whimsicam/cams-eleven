@@ -1,0 +1,72 @@
+/* Animazioni di Danny: respiro, blink, salto e dondolo (dal laboratorio Atypicam). */
+.danny {
+  overflow: visible;
+  display: block;
+}
+.danny-body {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: danny-breathe 3.6s ease-in-out infinite;
+}
+.danny-lids {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.danny-blink .danny-lids {
+  animation: danny-blink 0.18s ease-in-out;
+}
+.danny-hop .danny-body {
+  animation: danny-hop 0.7s ease-in-out;
+}
+.danny-wobble .danny-body {
+  animation: danny-wobble 0.8s ease-in-out;
+}
+
+@keyframes danny-breathe {
+  0%,
+  100% {
+    transform: scale(1, 1);
+  }
+  50% {
+    transform: scale(1.02, 0.97);
+  }
+}
+@keyframes danny-blink {
+  50% {
+    transform: scaleY(0.08);
+  }
+}
+@keyframes danny-hop {
+  0%,
+  100% {
+    transform: translateY(0) scale(1, 1);
+  }
+  20% {
+    transform: scale(1.08, 0.9);
+  }
+  50% {
+    transform: translateY(-14%) scale(0.95, 1.06);
+  }
+  75% {
+    transform: scale(1.05, 0.94);
+  }
+}
+@keyframes danny-wobble {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  25% {
+    transform: rotate(-7deg);
+  }
+  60% {
+    transform: rotate(5deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .danny-body,
+  .danny-lids {
+    animation: none !important;
+  }
+}

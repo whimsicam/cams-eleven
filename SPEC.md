@@ -240,3 +240,10 @@ Dopo ogni fase: stato, cosa manca, checklist di prova (iPhone e desktop), attesa
 ## 16. Glossario minimo
 
 VPIP (voluntarily put money in pot), PFR (preflop raise), c-bet (continuation bet), outs, pot odds, implied odds, equity, EV (expected value), range, blocker, S17/H17, DAS, running count, true count, SRS (spaced repetition system).
+
+## 17. Stato delle fasi
+
+### Fase 1 — completata il 11/11/2026, in attesa di verifica dell'utente
+- Fatto: repo e struttura, CI (type-check, test, build) e deploy automatico su Pages, PWA installabile e offline, design system (`docs/design-system.md`), Danny in SVG, carte e tavolo SVG, engine Hold'em (puntate, side pot, showdown) con test fuzz, evaluator con oracolo enumerativo, shuffle con test chi-quadro, equity Monte Carlo ed esatta, tabella di equity preflop (169 mani, `data/holdem/preflop-equity.json`), bot Facile e Medio, tab Gioca e Progressi, storage locale, sync su branch `data` con coda offline.
+- Test: 49 passati in CI.
+- Rimandato alla Fase 2: tab Allenamento e Lezioni, Danny card del coach, pulsante "Chiedi a Claude", primi esperimenti del Laboratorio.

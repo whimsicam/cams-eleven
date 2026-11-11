@@ -1,0 +1,9 @@
+node_modules/
+dist/
+dev-dist/
+.vite/
+*.log
+.DS_Store
+# Mai committare token o segreti
+.env
+.env.*

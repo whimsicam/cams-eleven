@@ -1,0 +1,22 @@
+# CI: type-check, test e build su ogni push e pull request (tutti i branch tranne `data`,
+# che contiene solo i file dei progressi).
+name: CI
+
+on:
+  push:
+    branches-ignore: [data]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npx vite build

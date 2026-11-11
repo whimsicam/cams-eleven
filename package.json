@@ -1,0 +1,40 @@
+{
+  "name": "cams-eleven",
+  "version": "0.1.0",
+  "description": "Palestra personale per Texas Hold'em, blackjack (con conteggio) e poker all'italiana. Solo io contro bot, offline, senza backend.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit -p tsconfig.json && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:slow": "SLOW_TESTS=1 vitest run",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "gen:preflop": "tsx scripts/holdem/preflop-equity.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/whimsicam/cams-eleven.git"
+  },
+  "license": "MIT",
+  "homepage": "https://whimsicam.github.io/cams-eleven/",
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.3.0",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3",
+    "vite": "^8.3.8",
+    "vite-plugin-pwa": "^2.0.0",
+    "vitest": "^5.1.0"
+  },
+  "dependencies": {
+    "idb": "^8.0.4",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "zustand": "^5.1.0"
+  }
+}

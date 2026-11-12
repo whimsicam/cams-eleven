@@ -1,0 +1,137 @@
+/* Foglio dal basso (bottom sheet) e classifica dei punti */
+.sheet-root {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+}
+.sheet-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(6, 16, 13, 0.55);
+  opacity: 0;
+  transition: opacity var(--dur-med) var(--ease-out);
+}
+.sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-height: calc(88% - var(--safe-top));
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  border-top: 1px solid var(--line-strong);
+  transform: translateY(100%);
+  transition: transform var(--dur-slow) var(--ease-out);
+  outline: none;
+  padding-bottom: var(--safe-bottom);
+}
+.sheet-open {
+  pointer-events: auto;
+}
+.sheet-open .sheet-backdrop {
+  opacity: 1;
+}
+.sheet-open .sheet {
+  transform: none;
+}
+@media (min-width: 900px) {
+  .sheet {
+    left: 50%;
+    right: auto;
+    width: 520px;
+    margin-left: -260px;
+  }
+}
+
+.sheet-head {
+  padding: var(--space-2) var(--space-4) var(--space-2);
+  touch-action: none;
+  cursor: grab;
+  border-bottom: 1px solid var(--line);
+}
+.sheet-grabber {
+  width: 36px;
+  height: 5px;
+  border-radius: 3px;
+  background: var(--line-strong);
+  margin: 0 auto var(--space-2);
+}
+.sheet-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.sheet-titlebar h2 {
+  font-size: var(--text-lg);
+}
+.sheet-sub {
+  font-size: var(--text-sm);
+  margin: var(--space-1) 0 var(--space-1);
+}
+
+.rk-list {
+  list-style: none;
+  margin: 0;
+  padding: var(--space-2) var(--space-3) var(--space-4);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+.rk-row {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-2);
+  border-radius: var(--radius-md);
+}
+.rk-row + .rk-row {
+  border-top: 1px solid var(--line);
+}
+.rk-mine {
+  background: var(--wash-strong);
+  border-top-color: transparent;
+}
+.rk-mine + .rk-row {
+  border-top-color: transparent;
+}
+.rk-pos {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--text-faint);
+  padding-top: 1px;
+  text-align: right;
+}
+.rk-name {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0 var(--space-2);
+}
+.rk-name b {
+  font-weight: 650;
+}
+.rk-it {
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+.rk-you {
+  font-size: var(--text-xs);
+  font-weight: 650;
+  color: var(--on-accent);
+  background: var(--coral);
+  border-radius: 999px;
+  padding: 1px 8px;
+}
+.rk-cards {
+  display: flex;
+  gap: 4px;
+  margin: var(--space-2) 0 var(--space-1);
+}
+.rk-text {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  margin: 0;
+}

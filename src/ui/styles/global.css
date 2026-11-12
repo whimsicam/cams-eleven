@@ -1,4 +1,4 @@
-/* Stili globali: reset leggero, tipografia, griglia "blueprint" del fondo, componenti di base. */
+/* Stili globali: reset leggero, tipografia, componenti di base. */
 @import "./tokens.css";
 
 *,
@@ -7,40 +7,55 @@
   box-sizing: border-box;
 }
 
+/* L'app occupa esattamente lo schermo: niente scroll della pagina, scrollano solo le viste lunghe. */
+html,
+body,
+#root {
+  height: 100%;
+}
+
 html {
   -webkit-text-size-adjust: 100%;
   color-scheme: dark;
+  background: var(--bg);
 }
 
 body {
   margin: 0;
-  min-height: 100dvh;
-  background-color: var(--bg);
-  /* Griglia sottile come nel poster di riferimento */
-  background-image:
-    linear-gradient(var(--felt-line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--felt-line) 1px, transparent 1px);
-  background-size: 28px 28px;
+  overflow: hidden;
+  background: var(--bg);
   color: var(--text);
   font-family: var(--font-ui);
   font-size: var(--text-md);
   line-height: 1.45;
+  font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
   overscroll-behavior: none;
-  /* Niente selezione accidentale del testo mentre si tocca il tavolo */
+  /* Niente selezione accidentale mentre si tocca il tavolo */
   -webkit-user-select: none;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background: var(--coral);
+  color: var(--on-accent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--coral);
+  outline-offset: 2px;
 }
 
 h1,
 h2,
 h3 {
   font-family: var(--font-display);
-  font-weight: 400;
-  letter-spacing: -0.01em;
-  line-height: 1.05;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
   margin: 0;
+  text-wrap: balance;
 }
 
 h1 {
@@ -51,16 +66,14 @@ h2 {
 }
 h3 {
   font-size: var(--text-lg);
-  font-family: var(--font-ui);
-  font-weight: 700;
 }
 
 p {
   margin: 0 0 var(--space-3);
+  text-wrap: pretty;
 }
 
-.mono {
-  font-family: var(--font-mono);
+.num {
   font-variant-numeric: tabular-nums;
 }
 
@@ -68,25 +81,22 @@ p {
   color: var(--text-muted);
 }
 
-/* Etichetta tecnica stile poster: monospace, piccola, maiuscola */
+/* Etichetta breve: piccola, in tono secondario. Niente maiuscolo spaziato. */
 .label {
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-muted);
+  font-size: var(--text-sm);
+  color: var(--text-faint);
 }
 
 /* Pulsanti */
 .btn {
   appearance: none;
-  border: 2px solid transparent;
+  border: 1px solid transparent;
   border-radius: var(--radius-md);
   min-height: var(--tap);
   padding: 0 var(--space-4);
-  font: 600 var(--text-md) var(--font-ui);
+  font: 600 var(--text-md) / 1.15 var(--font-ui);
   color: var(--text);
-  background: var(--surface-raised);
+  background: var(--wash-strong);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -94,31 +104,46 @@ p {
   gap: var(--space-2);
   transition:
     transform var(--dur-fast) var(--ease-out),
-    background var(--dur-fast),
+    background-color var(--dur-fast),
     opacity var(--dur-fast);
   touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
 }
 .btn:active {
   transform: scale(0.97);
 }
 .btn:disabled {
-  opacity: 0.4;
+  opacity: 0.38;
   cursor: default;
 }
+@media (hover: hover) {
+  .btn:not(:disabled):hover {
+    filter: brightness(1.08);
+  }
+}
 .btn-primary {
-  background: var(--accent);
-  color: var(--ink-900);
+  background: var(--coral);
+  color: var(--on-accent);
 }
 .btn-paper {
-  background: var(--paper-100);
-  color: var(--ink-900);
+  background: var(--paper);
+  color: var(--ink);
 }
 .btn-ghost {
   background: transparent;
-  border-color: var(--paper-400);
+  border-color: var(--line-strong);
+}
+.btn-quiet {
+  background: transparent;
+  color: var(--text-muted);
 }
 .btn-block {
   width: 100%;
+}
+.btn-icon {
+  min-width: var(--tap);
+  padding: 0;
 }
 
 /* Input */
@@ -126,37 +151,36 @@ p {
   width: 100%;
   min-height: var(--tap);
   border-radius: var(--radius-md);
-  border: 2px solid var(--felt-600);
-  background: var(--felt-900);
+  border: 1px solid var(--line-strong);
+  background: var(--green-950);
   color: var(--text);
   padding: 0 var(--space-3);
-  font: var(--text-md) var(--font-mono);
+  font: var(--text-md) var(--font-ui);
   -webkit-user-select: text;
   user-select: text;
 }
 .input:focus {
   outline: none;
-  border-color: var(--accent);
+  border-color: var(--coral);
 }
 
-/* Card di contenuto (pannelli) */
+/* Pannello: superficie leggermente più chiara, bordo sottile, nessuna ombra */
 .panel {
   background: var(--surface);
   border-radius: var(--radius-lg);
   padding: var(--space-4);
-  border: 1px solid rgba(255, 247, 224, 0.08);
+  border: 1px solid var(--line);
 }
 
-/* Badge numerico (es. "01", "+3 700") come nel poster */
+/* Badge breve (es. "Fase 2") */
 .badge {
   display: inline-block;
-  font-family: var(--font-mono);
   font-size: var(--text-xs);
+  font-weight: 600;
   padding: 2px 8px;
   border-radius: 999px;
-  background: var(--ochre-500);
-  color: var(--ink-900);
-  letter-spacing: 0.06em;
+  background: var(--wash-strong);
+  color: var(--text-muted);
 }
 
 .sr-only {

@@ -1,66 +1,64 @@
 /*
- * Design token di cam's eleven — derivati dal poster di riferimento (docs/reference/01-full-house.png).
- * Documentazione: docs/design-system.md. Cambiare qui cambia tutta l'app.
+ * Design token di cam's eleven. Documentazione: docs/design-system.md.
+ *
+ * v2 (12/11/2026): versione "più leggera" del poster di riferimento.
+ * - Un solo verde di fondo, desaturato; il tavolo è appena più chiaro, senza ombre pesanti.
+ * - Il crema della carta è il colore del testo; il corallo è riservato all'azione principale
+ *   e ai semi rossi. Niente più ocra ovunque (stack, piatto, bordi).
+ * - Testo nel font di sistema (SF Pro su iPhone), display in Bricolage Grotesque.
+ * Contrasti verificati da tests/ui/contrast.test.ts.
  */
 :root {
-  /* Colori: verde feltro, crema carta, inchiostro, corallo (cuori/quadri e accento), ocra (marker) */
-  --felt-900: #163a2c;
-  --felt-800: #1f4d3a;
-  --felt-700: #27604a;
-  --felt-600: #2f7358;
-  --felt-line: rgba(255, 247, 224, 0.1);
+  /* Verdi (fondo e tavolo) */
+  --green-950: #102520;
+  --green-900: #16302a;
+  --green-850: #1b3832;
+  --green-800: #20423a;
+  --green-700: #2a5348;
 
-  --paper-100: #fff7e0;
-  --paper-200: #f3e9cd;
-  --paper-300: #e3d6b4;
-  --paper-400: #c9bb97;
+  /* Carta e testo */
+  --paper: #f6f1e3;
+  --paper-dim: #b8c4ba; /* testo secondario su verde, tinto di verde (mai grigio) */
+  --paper-faint: #8fa298; /* etichette e testo terziario */
 
-  --ink-900: #161512;
-  --ink-700: #2b2925;
-  --ink-500: #5a564d;
+  /* Inchiostro (su carta) */
+  --ink: #17191a;
+  --ink-soft: #4a4f4c;
 
-  --coral-500: #f1623f;
-  --coral-400: #f98160;
-  --coral-600: #cf4b2b;
+  /* Accento e segnali */
+  --coral: #f07253;
+  --coral-strong: #e55c3b;
+  --red-suit: #c93d24; /* cuori e quadri sulla carta */
+  --win: #8fd6a8;
+  --loss: #f29a86;
+  --gold: #e9c46a; /* solo per il turno di chi agisce */
 
-  --ochre-500: #e8b83a;
-  --ochre-400: #f2cd6b;
-
-  --chip-white: #f5f0e4;
-  --chip-red: #d8402b;
-  --chip-blue: #2c5aa0;
-  --chip-green: #2f8f5b;
-  --chip-black: #1c1c1c;
+  /* Linee e superfici trasparenti sopra il verde */
+  --line: rgba(246, 241, 227, 0.1);
+  --line-strong: rgba(246, 241, 227, 0.18);
+  --wash: rgba(246, 241, 227, 0.06);
+  --wash-strong: rgba(246, 241, 227, 0.1);
 
   /* Semantici */
-  --bg: var(--felt-800);
-  --bg-deep: var(--felt-900);
-  --surface: var(--felt-700);
-  --surface-raised: var(--felt-600);
-  --text: var(--paper-100);
-  --text-muted: var(--paper-400);
-  --accent: var(--coral-500);
-  --accent-strong: var(--coral-600);
-  --warn: var(--ochre-500);
-  --ok: #7cd39a;
-  --danger: #ff6b5e;
-  --card-face: var(--paper-100);
-  --card-ink: var(--ink-900);
-  --card-red: var(--coral-500);
-  --suit-black: var(--ink-900);
-  --suit-red: var(--coral-500);
+  --bg: var(--green-900);
+  --surface: var(--green-850);
+  --felt: var(--green-800);
+  --text: var(--paper);
+  --text-muted: var(--paper-dim);
+  --text-faint: var(--paper-faint);
+  --accent: var(--coral);
+  --on-accent: #1a0f0b;
 
   /* Tipografia */
-  --font-display: "Archivo Black", "Space Grotesk", system-ui, sans-serif;
-  --font-ui: "Space Grotesk", system-ui, -apple-system, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  --font-display: "Bricolage Grotesque Variable", ui-rounded, system-ui, sans-serif;
+  --font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Segoe UI", Roboto, sans-serif;
 
-  --text-xs: 0.75rem;
-  --text-sm: 0.875rem;
-  --text-md: 1rem;
-  --text-lg: 1.25rem;
-  --text-xl: 1.75rem;
-  --text-2xl: 2.5rem;
+  --text-xs: 0.75rem; /* 12 px: solo etichette brevi */
+  --text-sm: 0.875rem; /* 14 px */
+  --text-md: 1rem; /* 16 px: corpo */
+  --text-lg: 1.1875rem; /* 19 px */
+  --text-xl: 1.625rem; /* 26 px */
+  --text-2xl: 2.25rem; /* 36 px */
 
   /* Spazi e forme */
   --space-1: 4px;
@@ -69,24 +67,25 @@
   --space-4: 16px;
   --space-5: 24px;
   --space-6: 32px;
-  --radius-sm: 6px;
+  --radius-sm: 8px;
   --radius-md: 12px;
-  --radius-lg: 20px;
-  --radius-card: 10px;
+  --radius-lg: 18px;
 
-  /* Touch target minimo (iPhone) */
-  --tap: 48px;
+  /* Touch target (Apple HIG: 44 pt) */
+  --tap: 44px;
 
   /* Animazioni */
-  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
-  --ease-spring: cubic-bezier(0.3, 1.35, 0.5, 1);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.3, 1.3, 0.5, 1);
   --dur-fast: 140ms;
-  --dur-med: 260ms;
-  --dur-slow: 480ms;
+  --dur-med: 240ms;
+  --dur-slow: 420ms;
 
   /* Safe area iPhone */
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
 }
 
 @media (prefers-reduced-motion: reduce) {

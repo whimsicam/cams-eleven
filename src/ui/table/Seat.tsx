@@ -1,52 +1,59 @@
-/** Un giocatore al tavolo: nome, stack, puntata corrente, carte, button, stato (fold/all-in). */
-import type { CSSProperties } from "react";
+/** Un bot al tavolo: carte, nome, stack, dealer button, puntata (spostata verso il centro). */
 import type { SeatState } from "../../engine/holdem/types";
 import type { TablePlayer } from "../../engine/holdem/table";
+import { MiniCard } from "../cards/MiniCard";
 import { PlayingCard } from "../cards/PlayingCard";
 import { fmtChips } from "../format";
 
 export interface SeatProps {
-  style: CSSProperties;
+  pos: { x: number; y: number };
+  betPos: { x: number; y: number };
   player: TablePlayer;
   state: SeatState | null;
-  isHuman: boolean;
   isActing: boolean;
   isButton: boolean;
   isWinner: boolean;
   showCards: boolean;
+  cardWidth: number;
   handOver: boolean | undefined;
 }
 
-export function Seat({ style, player, state, isHuman, isActing, isButton, isWinner, showCards, handOver }: SeatProps) {
+export function Seat({ pos, betPos, player, state, isActing, isButton, isWinner, showCards, cardWidth, handOver }: SeatProps) {
   const folded = state?.folded ?? false;
-  const cls = ["seat", isHuman ? "seat-human" : "", isActing ? "seat-acting" : "", folded ? "seat-folded" : "", isWinner ? "seat-winner" : "", state ? "" : "seat-out"]
-    .filter(Boolean)
-    .join(" ");
-  const cardWidth = isHuman ? 72 : 36;
+  const cls = ["seat", isActing ? "seat-acting" : "", folded ? "seat-folded" : "", isWinner ? "seat-winner" : "", state ? "" : "seat-out"].filter(Boolean).join(" ");
   const stack = state ? state.stack : player.stack;
+  const hasCards = state && state.holeCards.length > 0 && (!folded || showCards);
 
   return (
-    <div className={cls} style={style}>
-      {state && state.holeCards.length > 0 && (
-        <div className="seat-cards">
-          {state.holeCards.map((c, i) => (
-            <PlayingCard key={i} card={showCards ? c : undefined} faceDown={!showCards} width={cardWidth} dimmed={folded} highlight={isWinner && !!handOver} className="pcard-deal" style={{ animationDelay: `${i * 90}ms` }} />
-          ))}
+    <>
+      <div className={cls} style={{ left: `${pos.x}%`, top: `${pos.y}%` }}>
+        {/* Coperte: due retro piccoli. Scoperte allo showdown: carte in miniatura, leggibili e compatte. */}
+        <div className={`seat-cards ${showCards ? "seat-cards-open" : ""} ${isWinner && handOver ? "seat-cards-win" : ""}`} style={{ height: (cardWidth * 140) / 100 }}>
+          {hasCards &&
+            state.holeCards.map((c, i) =>
+              showCards ? (
+                <MiniCard key={i} card={c} />
+              ) : (
+                <PlayingCard key={i} faceDown width={cardWidth} className="pcard-deal" style={{ animationDelay: `${i * 80}ms` }} />
+              ),
+            )}
         </div>
-      )}
-      <div className="seat-plate">
-        <div className="seat-name">
-          {player.name}
-          {isButton && <span className="seat-button" title="Dealer button">D</span>}
+        <div className="seat-plate">
+          <span className="seat-name">{player.name}</span>
+          <span className="seat-stack num">{state?.allIn ? "All-in" : fmtChips(stack)}</span>
+          {isButton && (
+            <span className="dealer-btn" title="Dealer button" aria-label="dealer">
+              D
+            </span>
+          )}
         </div>
-        <div className="seat-stack mono">{state?.allIn ? "ALL-IN" : fmtChips(stack)}</div>
       </div>
-      {state && state.streetBet > 0 && (
-        <div className="seat-bet mono">
-          <span className="chip" />
+      {state && state.streetBet > 0 && !handOver && (
+        <div className="seat-bet num" style={{ left: `${betPos.x}%`, top: `${betPos.y}%` }}>
+          <span className="chip" aria-hidden="true" />
           {fmtChips(state.streetBet)}
         </div>
       )}
-    </div>
+    </>
   );
 }

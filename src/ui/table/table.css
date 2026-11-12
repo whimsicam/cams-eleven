@@ -1,148 +1,145 @@
-/* Tavolo e seat */
+/* Tavolo: riempie lo spazio che gli resta tra la barra in alto e la fascia della tua mano. */
 .table {
   position: relative;
   width: 100%;
-  aspect-ratio: 3 / 4;
-  max-height: 62dvh;
-  margin: 0 auto;
+  height: 100%;
+  min-height: 0;
 }
-@media (min-width: 720px) {
-  .table {
-    aspect-ratio: 4 / 3;
-    max-height: 70dvh;
-    max-width: 960px;
-  }
-}
-
 .table-felt {
   position: absolute;
-  inset: 16% 14% 8%;
-  border-radius: 50% / 40%;
-  background: radial-gradient(ellipse at 50% 40%, var(--felt-600), var(--felt-700) 70%);
-  border: 6px solid var(--felt-900);
-  box-shadow:
-    inset 0 0 40px rgba(0, 0, 0, 0.35),
-    0 10px 30px rgba(0, 0, 0, 0.35);
+  inset: 9% 9% 6%;
+  border-radius: 999px;
+  background: var(--felt);
+  border: 1px solid var(--line-strong);
+  /* Secondo anello sottile, come il bordo di un tavolo vero */
+  box-shadow: inset 0 0 0 7px var(--green-850), inset 0 0 0 8px var(--line);
 }
-@media (min-width: 720px) {
-  .table-felt {
-    inset: 12% 10%;
-    border-radius: 50% / 50%;
-  }
-}
-
 .table-center {
   position: absolute;
   left: 50%;
-  top: 47%;
+  top: 50%;
   transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--space-2);
-  width: 80%;
+  width: 72%;
 }
 .table-pot {
-  color: var(--paper-200);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
 }
-.table-pot-n {
-  color: var(--ochre-400);
+.table-pot b {
+  color: var(--text);
+  font-weight: 650;
   font-size: var(--text-md);
 }
 .table-board {
   display: flex;
   gap: 6px;
-  min-height: 74px;
   align-items: center;
   justify-content: center;
 }
-.table-board-empty {
-  opacity: 0.5;
+.board-slot {
+  border-radius: 6px;
+  border: 1px dashed var(--line-strong);
+  opacity: 0.6;
 }
 
-/* Seat */
+/* Bot */
 .seat {
   position: absolute;
   transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  min-width: 84px;
+  gap: 3px;
   transition: opacity var(--dur-med);
 }
 .seat-out {
-  opacity: 0.35;
+  opacity: 0.3;
 }
 .seat-folded .seat-plate {
-  opacity: 0.5;
+  opacity: 0.45;
 }
 .seat-cards {
   display: flex;
-  gap: 3px;
+  justify-content: center;
 }
-.seat-human .seat-cards {
-  gap: 8px;
-  margin-bottom: -6px;
+.seat-cards .pcard + .pcard {
+  margin-left: -45%;
+}
+.seat-cards .pcard:first-child {
+  transform: rotate(-6deg);
+}
+.seat-cards-open {
+  gap: 2px;
+  align-items: flex-end;
+}
+.seat-cards-win .minicard-bg {
+  stroke: var(--gold);
+  stroke-width: 2;
 }
 .seat-plate {
-  background: var(--felt-900);
-  border: 2px solid transparent;
-  border-radius: var(--radius-md);
-  padding: 4px 10px;
-  text-align: center;
-  min-width: 84px;
-  transition: border-color var(--dur-fast), box-shadow var(--dur-fast);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 70px;
+  padding: 3px 10px 4px;
+  border-radius: var(--radius-sm);
+  background: rgba(16, 37, 32, 0.82);
+  border: 1px solid var(--line);
+  line-height: 1.2;
+  transition:
+    border-color var(--dur-fast),
+    box-shadow var(--dur-fast);
 }
 .seat-acting .seat-plate {
-  border-color: var(--ochre-500);
-  box-shadow: 0 0 0 3px rgba(232, 184, 58, 0.25);
-  animation: seat-pulse 1.2s ease-in-out infinite;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(233, 196, 106, 0.18);
 }
 .seat-winner .seat-plate {
-  border-color: var(--ok);
-}
-@keyframes seat-pulse {
-  50% {
-    box-shadow: 0 0 0 6px rgba(232, 184, 58, 0.12);
-  }
+  border-color: var(--win);
 }
 .seat-name {
-  font-size: var(--text-sm);
+  font-size: 0.8125rem;
   font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-}
-.seat-button {
-  display: inline-grid;
-  place-items: center;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: var(--paper-100);
-  color: var(--ink-900);
-  font: 700 11px var(--font-mono);
 }
 .seat-stack {
-  font-size: var(--text-sm);
-  color: var(--ochre-400);
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+.dealer-btn {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--paper);
+  color: var(--ink);
+  font: 700 11px/1 var(--font-ui);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 .seat-bet {
+  position: absolute;
+  transform: translate(-50%, -50%);
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  font-size: var(--text-xs);
-  background: rgba(0, 0, 0, 0.35);
-  padding: 2px 8px;
+  gap: 5px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 2px 8px 2px 4px;
   border-radius: 999px;
+  background: rgba(16, 37, 32, 0.6);
 }
 .chip {
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
-  background: var(--chip-red);
-  border: 2px dashed var(--paper-100);
-  box-sizing: border-box;
+  background: var(--coral);
+  box-shadow: inset 0 0 0 2px var(--coral), inset 0 0 0 3.5px var(--paper);
 }

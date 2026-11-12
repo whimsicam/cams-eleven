@@ -1,11 +1,13 @@
 /**
- * Barra delle azioni dell'utente: Fold / Check o Call / Bet o Raise con slider e scorciatoie.
- * Pulsanti alti ≥ 48 px, a tutta larghezza su iPhone.
+ * Azioni dell'utente.
+ * - Riga principale: Fold · Check/Call · Bet/Raise, tre colonne uguali.
+ * - Bet/Raise apre il pannello della puntata AL POSTO della riga (non sopra la tab bar):
+ *   importo, slider, cinque scorciatoie in una griglia di colonne uguali, Annulla e Conferma.
  */
 import { useEffect, useState } from "react";
 import { legalActions, potSize } from "../../engine/holdem/engine";
 import type { Action, HandState } from "../../engine/holdem/types";
-import { fmtChips } from "../format";
+import { fmtChips, fmtDec } from "../format";
 import "./actionbar.css";
 
 export interface ActionBarProps {
@@ -16,11 +18,11 @@ export interface ActionBarProps {
 export function ActionBar({ hand, onAction }: ActionBarProps) {
   const legal = legalActions(hand);
   const [amount, setAmount] = useState(0);
-  const [showSlider, setShowSlider] = useState(false);
+  const [sizing, setSizing] = useState(false);
 
   useEffect(() => {
     if (legal?.raise) setAmount(legal.raise.min);
-    setShowSlider(false);
+    setSizing(false);
   }, [hand, legal?.raise?.min]);
 
   if (!legal) return null;
@@ -29,56 +31,74 @@ export function ActionBar({ hand, onAction }: ActionBarProps) {
   const raise = legal.raise;
   const bb = hand.config.bigBlind;
 
-  const quick = (label: string, total: number) => {
-    if (!raise) return null;
-    const v = Math.max(raise.min, Math.min(raise.max, Math.round(total)));
+  if (sizing && raise) {
+    // Importo "a" (totale della puntata nel giro) per una frazione del piatto dopo il call.
+    const toPot = (f: number) => me.streetBet + legal.callAmount + (pot + legal.callAmount) * f;
+    const quicks: Array<[string, number]> = [
+      ["Min", raise.min],
+      ["½ pot", toPot(0.5)],
+      ["¾ pot", toPot(0.75)],
+      ["Pot", toPot(1)],
+      ["All-in", raise.max],
+    ];
+    const clamp = (v: number) => Math.max(raise.min, Math.min(raise.max, Math.round(v)));
     return (
-      <button key={label} className="btn btn-ghost ab-quick" onClick={() => setAmount(v)}>
-        {label}
-      </button>
-    );
-  };
-
-  return (
-    <div className="actionbar">
-      {showSlider && raise && (
-        <div className="ab-slider panel">
-          <div className="ab-slider-head">
-            <span className="label">{raise.isBet ? "punta" : "rilancia a"}</span>
-            <span className="mono ab-amount">{fmtChips(amount)}</span>
-            <span className="muted mono">{(amount / bb).toLocaleString("it-IT", { maximumFractionDigits: 1 })} bb</span>
-          </div>
-          <input type="range" min={raise.min} max={raise.max} step={1} value={amount} onChange={(e) => setAmount(Number(e.target.value))} className="ab-range" />
-          <div className="ab-quicks">
-            {quick("min", raise.min)}
-            {quick("½ piatto", me.streetBet + legal.callAmount + (pot + legal.callAmount) * 0.5)}
-            {quick("¾ piatto", me.streetBet + legal.callAmount + (pot + legal.callAmount) * 0.75)}
-            {quick("piatto", me.streetBet + legal.callAmount + (pot + legal.callAmount))}
-            {quick("all-in", raise.max)}
-          </div>
-          <button className="btn btn-primary btn-block" onClick={() => onAction({ type: raise.isBet ? "bet" : "raise", amount })}>
-            {raise.isBet ? "Punta" : "Rilancia a"} {fmtChips(amount)}
+      <div className="ab-sizing">
+        <div className="ab-amount-row">
+          <span className="ab-amount-label">{raise.isBet ? "Bet" : "Raise to"}</span>
+          <b className="ab-amount num">{fmtChips(amount)}</b>
+          <span className="ab-amount-bb num">{fmtDec(amount / bb)} bb</span>
+        </div>
+        <input
+          type="range"
+          className="ab-range"
+          min={raise.min}
+          max={raise.max}
+          step={1}
+          value={amount}
+          onChange={(e) => setAmount(Number(e.target.value))}
+          aria-label="Importo della puntata"
+        />
+        <div className="ab-quicks">
+          {quicks.map(([label, v]) => {
+            const val = clamp(v);
+            return (
+              <button key={label} className={`btn ab-quick ${amount === val ? "ab-quick-on" : ""}`} onClick={() => setAmount(val)}>
+                {label}
+              </button>
+            );
+          })}
+        </div>
+        <div className="ab-confirm">
+          <button className="btn btn-ghost" onClick={() => setSizing(false)}>
+            Annulla
+          </button>
+          <button className="btn btn-primary" onClick={() => onAction({ type: raise.isBet ? "bet" : "raise", amount })}>
+            {raise.isBet ? "Bet" : "Raise to"} {fmtChips(amount)}
           </button>
         </div>
-      )}
-      <div className="ab-row">
-        <button className="btn ab-fold" disabled={!legal.canFold} onClick={() => onAction({ type: "fold" })}>
-          Fold
-        </button>
-        {legal.canCheck ? (
-          <button className="btn btn-paper" onClick={() => onAction({ type: "check" })}>
-            Check
-          </button>
-        ) : (
-          <button className="btn btn-paper" onClick={() => onAction({ type: "call" })}>
-            Call {fmtChips(legal.callAmount)}
-            {legal.callIsAllIn && <span className="label">all-in</span>}
-          </button>
-        )}
-        <button className="btn btn-primary" disabled={!raise} onClick={() => setShowSlider((v) => !v)}>
-          {raise?.isBet ? "Bet" : "Raise"}
-        </button>
       </div>
+    );
+  }
+
+  return (
+    <div className="ab-row">
+      <button className="btn ab-btn ab-fold" disabled={!legal.canFold} onClick={() => onAction({ type: "fold" })}>
+        Fold
+      </button>
+      {legal.canCheck ? (
+        <button className="btn ab-btn btn-paper" onClick={() => onAction({ type: "check" })}>
+          Check
+        </button>
+      ) : (
+        <button className="btn ab-btn btn-paper" onClick={() => onAction({ type: "call" })}>
+          Call <span className="num">{fmtChips(legal.callAmount)}</span>
+          {legal.callIsAllIn && <small>all-in</small>}
+        </button>
+      )}
+      <button className="btn ab-btn btn-primary" disabled={!raise} onClick={() => setSizing(true)}>
+        {raise?.isBet ? "Bet" : "Raise"}
+      </button>
     </div>
   );
 }

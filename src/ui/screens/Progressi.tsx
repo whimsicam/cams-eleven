@@ -2,6 +2,7 @@
  * Tab Progressi: riepilogo delle mani giocate, stato della sincronizzazione, impostazioni
  * (token GitHub, nome, velocità). Statistiche vere (VPIP, PFR…) arrivano in Fase 3.
  */
+import { BOT_LEVEL_NAMES_IT, type BotLevel } from "../../bots";
 import { useEffect, useState } from "react";
 import { checkToken } from "../../progress/github";
 import { deviceId, getToken, loadLocal, setToken, wipeLocal } from "../../progress/local";
@@ -60,17 +61,17 @@ export function Progressi() {
   );
 
   return (
-    <div className="screen">
-      <div className="gioca-hero">
+    <div className="screen screen-scroll progressi">
+      <div className="page-hero">
         <Danny expression={holdem.length ? "pensoso" : "neutro"} size={88} />
         <div>
-          <h1>Progressi</h1>
+          <h1>Progress</h1>
           <p className="muted">Mani, risultati e sincronizzazione.</p>
         </div>
       </div>
 
       <section className="panel">
-        <div className="label">Hold'em</div>
+        <h3 className="section-title">Hold'em</h3>
         <div className="stat-grid">
           <Stat label="mani giocate" value={fmtChips(holdem.length)} />
           <Stat label="risultato" value={fmtSigned(net)} tone={net >= 0 ? "pos" : "neg"} />
@@ -80,7 +81,7 @@ export function Progressi() {
           <ul className="plain-list">
             {byLevel.map(([level, v]) => (
               <li key={level}>
-                <span className="muted">{level}</span>: {fmtChips(v.n)} mani, <span className={v.net >= 0 ? "pos" : "neg"}>{fmtSigned(v.net)}</span>
+                <span className="muted">{BOT_LEVEL_NAMES_IT[level as BotLevel] ?? level}</span>: {fmtChips(v.n)} {v.n === 1 ? "mano" : "mani"}, <span className={v.net >= 0 ? "pos" : "neg"}>{fmtSigned(v.net)}</span>
               </li>
             ))}
           </ul>
@@ -89,13 +90,13 @@ export function Progressi() {
       </section>
 
       <section className="panel">
-        <div className="label">Sincronizzazione</div>
+        <h3 className="section-title">Sincronizzazione</h3>
         <p>
           <b className={`sync-${sync.status}`}>{STATUS_IT[sync.status]}</b>
           {sync.lastError && <span className="neg"> — {sync.lastError}</span>}
         </p>
         <p className="muted small">
-          Dispositivo <span className="mono">{deviceId()}</span>
+          Dispositivo <span className="code">{deviceId()}</span>
           {sync.lastSync && <> · ultima sync {new Date(sync.lastSync).toLocaleString("it-IT")}</>}
           {sync.remoteDevices > 0 && <> · {sync.remoteDevices} dispositivi nel repo</>}
           {sync.pendingPush && <> · modifiche da inviare</>}
@@ -113,9 +114,9 @@ export function Progressi() {
       </section>
 
       <section className="panel">
-        <div className="label">Token GitHub</div>
+        <h3 className="section-title">Token GitHub</h3>
         <p className="muted small">
-          Token fine-grained con permesso <span className="mono">Contents: read/write</span> solo sul repo <span className="mono">whimsicam/cams-eleven</span>. Resta nel localStorage di questo
+          Token fine-grained con permesso <span className="code">Contents: read/write</span> solo sul repo <span className="code">whimsicam/cams-eleven</span>. Resta nel localStorage di questo
           dispositivo, mai nel codice né nel repo. Da reinserire alla scadenza.
         </p>
         <div className="row">
@@ -140,7 +141,7 @@ export function Progressi() {
       </section>
 
       <section className="panel">
-        <div className="label">Questo dispositivo</div>
+        <h3 className="section-title">Questo dispositivo</h3>
         <button
           className="btn btn-ghost"
           onClick={() => {
@@ -157,7 +158,7 @@ export function Progressi() {
 function Stat({ label, value, tone = "" }: { label: string; value: string; tone?: string }) {
   return (
     <div className="stat">
-      <div className={`stat-value mono ${tone}`}>{value}</div>
+      <div className={`stat-value ${tone}`}>{value}</div>
       <div className="label">{label}</div>
     </div>
   );

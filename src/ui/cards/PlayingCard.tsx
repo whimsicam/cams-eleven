@@ -1,9 +1,16 @@
 /**
- * Carta da gioco in SVG, nello stile piatto del poster di riferimento:
- * fondo crema, pips grandi, indice rank+seme negli angoli, figure rese come lettera grande.
- * Il retro è un pattern a scacchi. Flip animato via CSS (vedi cards.css).
+ * Carta da gioco in SVG (viewBox 100 × 140).
+ *
+ * - Semi ed emblemi delle figure vengono da suits.ts, simmetrici per costruzione.
+ * - Indice (valore + seme) negli angoli, in una colonna stretta che non tocca i pips.
+ * - Pips nella disposizione delle carte francesi; quelli della metà inferiore sono ruotati di 180°.
+ * - Figure: cornice, emblema (corona, diadema, berretto) in alto e ruotato in basso, seme al centro:
+ *   simmetriche sia a specchio sia per rotazione, come le carte vere.
+ * - Retro: verde del tavolo con reticolo leggero.
  */
-import { rankOf, suitOf, SUIT_SYMBOLS, type Card } from "../../engine/cards/card";
+import type { CSSProperties } from "react";
+import { rankOf, suitOf, SUIT_NAMES_IT, type Card } from "../../engine/cards/card";
+import { COURT_EMBLEMS, SUIT_PATHS } from "./suits";
 import "./cards.css";
 
 export interface PlayingCardProps {
@@ -16,38 +23,42 @@ export interface PlayingCardProps {
   /** Evidenzia (es. carte vincenti allo showdown). */
   highlight?: boolean;
   dimmed?: boolean;
-  style?: React.CSSProperties;
+  style?: CSSProperties;
 }
 
-const RANK_LABEL = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"];
+const RANK_LABEL = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"] as const;
+const RANK_NAME_IT = ["Due", "Tre", "Quattro", "Cinque", "Sei", "Sette", "Otto", "Nove", "Dieci", "Fante", "Regina", "Re", "Asso"] as const;
 
-/** Posizioni dei pips (x, y, flipped) per le carte numeriche, in un viewBox 100×140. */
-const PIP_LAYOUT: Record<number, Array<[number, number, boolean]>> = {
-  2: [[50, 38, false], [50, 102, true]],
-  3: [[50, 38, false], [50, 70, false], [50, 102, true]],
-  4: [[34, 38, false], [66, 38, false], [34, 102, true], [66, 102, true]],
-  5: [[34, 38, false], [66, 38, false], [50, 70, false], [34, 102, true], [66, 102, true]],
-  6: [[34, 38, false], [66, 38, false], [34, 70, false], [66, 70, false], [34, 102, true], [66, 102, true]],
-  7: [[34, 38, false], [66, 38, false], [50, 54, false], [34, 70, false], [66, 70, false], [34, 102, true], [66, 102, true]],
-  8: [[34, 38, false], [66, 38, false], [50, 54, false], [34, 70, false], [66, 70, false], [50, 86, true], [34, 102, true], [66, 102, true]],
-  9: [[34, 34, false], [66, 34, false], [34, 58, false], [66, 58, false], [50, 70, false], [34, 82, true], [66, 82, true], [34, 106, true], [66, 106, true]],
-  10: [[34, 34, false], [66, 34, false], [50, 46, false], [34, 58, false], [66, 58, false], [34, 82, true], [66, 82, true], [50, 94, true], [34, 106, true], [66, 106, true]],
+/** Colonne e righe dei pips. */
+const L = 34, C = 50, R = 66;
+const PIPS: Record<number, Array<[number, number]>> = {
+  2: [[C, 34], [C, 106]],
+  3: [[C, 34], [C, 70], [C, 106]],
+  4: [[L, 34], [R, 34], [L, 106], [R, 106]],
+  5: [[L, 34], [R, 34], [C, 70], [L, 106], [R, 106]],
+  6: [[L, 34], [R, 34], [L, 70], [R, 70], [L, 106], [R, 106]],
+  7: [[L, 34], [R, 34], [C, 52], [L, 70], [R, 70], [L, 106], [R, 106]],
+  8: [[L, 34], [R, 34], [C, 52], [L, 70], [R, 70], [C, 88], [L, 106], [R, 106]],
+  9: [[L, 34], [R, 34], [L, 58], [R, 58], [C, 70], [L, 82], [R, 82], [L, 106], [R, 106]],
+  10: [[L, 34], [R, 34], [C, 46], [L, 58], [R, 58], [L, 82], [R, 82], [C, 94], [L, 106], [R, 106]],
 };
+const PIP_SIZE: Record<number, number> = { 2: 11, 3: 11, 4: 10, 5: 10, 6: 9.5, 7: 9, 8: 9, 9: 8.5, 10: 8.5 };
 
-/** Simbolo del seme come path SVG centrato in (0,0), dimensione ~1 unità. */
-function SuitGlyph({ suit, size, x, y, flipped = false }: { suit: number; size: number; x: number; y: number; flipped?: boolean }) {
-  const t = `translate(${x} ${y}) scale(${size}) ${flipped ? "rotate(180)" : ""}`;
-  const paths = [
-    // fiori
-    "M0 -0.55c-0.3 0-0.52 0.22-0.52 0.5 0 0.1 0.03 0.2 0.08 0.28-0.07-0.04-0.15-0.06-0.24-0.06-0.3 0-0.52 0.22-0.52 0.5s0.22 0.5 0.52 0.5c0.22 0 0.4-0.12 0.48-0.3L-0.3 1.1h0.6l-0.1-0.73c0.08 0.18 0.26 0.3 0.48 0.3 0.3 0 0.52-0.22 0.52-0.5s-0.22-0.5-0.52-0.5c-0.09 0-0.17 0.02-0.24 0.06 0.05-0.08 0.08-0.18 0.08-0.28 0-0.28-0.22-0.5-0.52-0.5z",
-    // quadri
-    "M0 -1L0.72 0 0 1-0.72 0z",
-    // cuori
-    "M0 1C-0.2 0.7-1 0.2-1-0.4-1-0.75-0.72-1-0.45-1-0.25-1-0.08-0.88 0-0.72 0.08-0.88 0.25-1 0.45-1 0.72-1 1-0.75 1-0.4 1 0.2 0.2 0.7 0 1z",
-    // picche
-    "M0 -1C0.2-0.7 1-0.2 1 0.4 1 0.75 0.72 0.95 0.45 0.95 0.25 0.95 0.1 0.86 0.02 0.75L0.3 1.2h-0.6l0.28-0.45C-0.1 0.86-0.25 0.95-0.45 0.95-0.72 0.95-1 0.75-1 0.4-1-0.2-0.2-0.7 0-1z",
-  ];
-  return <path d={paths[suit]} transform={t} className="card-suit" />;
+/** Seme centrato in (x, y), raggio ~`size`. Ruotato di 180° se sta nella metà bassa. */
+function Pip({ suit, x, y, size, flipped = false }: { suit: number; x: number; y: number; size: number; flipped?: boolean }) {
+  return <path d={SUIT_PATHS[suit]} transform={`translate(${x} ${y}) scale(${size})${flipped ? " rotate(180)" : ""}`} className="card-suit" />;
+}
+
+/** Indice d'angolo: valore sopra, seme sotto, centrati sulla stessa colonna (x = 12). */
+function CornerIndex({ label, suit }: { label: string; suit: number }) {
+  return (
+    <g>
+      <text x="12" y="23" className={`pcard-rank ${label === "10" ? "pcard-rank-10" : ""}`}>
+        {label}
+      </text>
+      <Pip suit={suit} x={12} y={34} size={5.4} />
+    </g>
+  );
 }
 
 export function PlayingCard({ card, faceDown = false, width = 64, className = "", highlight = false, dimmed = false, style }: PlayingCardProps) {
@@ -60,41 +71,46 @@ export function PlayingCard({ card, faceDown = false, width = 64, className = ""
   const cls = ["pcard", showBack ? "pcard-back" : "pcard-face", red ? "pcard-red" : "pcard-black", highlight ? "pcard-hl" : "", dimmed ? "pcard-dim" : "", className]
     .filter(Boolean)
     .join(" ");
+  const aria = showBack ? "carta coperta" : `${RANK_NAME_IT[rank]} di ${SUIT_NAMES_IT[suit]}`;
 
   return (
-    <svg className={cls} viewBox="0 0 100 140" width={width} height={height} style={style} role="img" aria-label={showBack ? "carta coperta" : `${label} di ${SUIT_SYMBOLS[suit]}`}>
-      <rect x="1" y="1" width="98" height="138" rx="9" className="pcard-bg" />
+    <svg className={cls} viewBox="0 0 100 140" width={width} height={height} style={style} role="img" aria-label={aria}>
+      <rect x="0.75" y="0.75" width="98.5" height="138.5" rx="9" className="pcard-bg" />
       {showBack ? (
         <>
           <defs>
-            <pattern id="pcard-check" width="12" height="12" patternUnits="userSpaceOnUse">
-              <rect width="6" height="6" className="pcard-check" />
-              <rect x="6" y="6" width="6" height="6" className="pcard-check" />
+            <pattern id="pcard-lattice" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <path d="M0 0H10M0 0V10" className="pcard-lattice" />
             </pattern>
           </defs>
-          <rect x="9" y="9" width="82" height="122" rx="4" fill="url(#pcard-check)" />
+          <rect x="7" y="7" width="86" height="126" rx="5" className="pcard-back-field" />
+          <rect x="7" y="7" width="86" height="126" rx="5" fill="url(#pcard-lattice)" />
         </>
       ) : (
         <>
-          {/* Indici negli angoli */}
-          <text x="8" y="22" className="pcard-rank">{label}</text>
-          <SuitGlyph suit={suit} size={6.5} x={13} y={32} />
+          <CornerIndex label={label} suit={suit} />
           <g transform="rotate(180 50 70)">
-            <text x="8" y="22" className="pcard-rank">{label}</text>
-            <SuitGlyph suit={suit} size={6.5} x={13} y={32} />
+            <CornerIndex label={label} suit={suit} />
           </g>
-          {rank <= 8 ? (
-            PIP_LAYOUT[rank + 2]!.map(([x, y, f], i) => <SuitGlyph key={i} suit={suit} size={rank <= 4 ? 10 : 8.5} x={x} y={y} flipped={f} />)
-          ) : rank === 12 ? (
-            <SuitGlyph suit={suit} size={30} x={50} y={70} />
-          ) : (
-            <>
-              <text x="50" y="86" className="pcard-court">{label}</text>
-              <SuitGlyph suit={suit} size={9} x={50} y={108} />
-            </>
-          )}
+          {rank <= 8 &&
+            PIPS[rank + 2]!.map(([x, y], i) => <Pip key={i} suit={suit} x={x} y={y} size={PIP_SIZE[rank + 2]!} flipped={y > 70} />)}
+          {rank === 12 && <Pip suit={suit} x={50} y={70} size={24} />}
+          {rank >= 9 && rank <= 11 && <Court rank={label as "J" | "Q" | "K"} suit={suit} />}
         </>
       )}
     </svg>
+  );
+}
+
+/** Figura: cornice, emblema in alto e capovolto in basso, seme al centro. */
+function Court({ rank, suit }: { rank: "J" | "Q" | "K"; suit: number }) {
+  const d = COURT_EMBLEMS[rank];
+  return (
+    <g>
+      <rect x="23" y="17" width="54" height="106" rx="5" className="pcard-frame" />
+      <path d={d} transform="translate(50 42) scale(15)" className="card-suit" />
+      <path d={d} transform="translate(50 98) scale(15) rotate(180)" className="card-suit" />
+      <Pip suit={suit} x={50} y={70} size={8} />
+    </g>
   );
 }

@@ -1,54 +1,79 @@
-/* Carte: colori dai token, animazioni di distribuzione e flip. */
+/* Carte: colori dai token, animazione di distribuzione. Ombra corta e morbida, non un alone. */
 .pcard {
   display: block;
+  flex: none;
   overflow: visible;
-  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.35));
+  filter: drop-shadow(0 1px 1.5px rgba(5, 15, 12, 0.35));
   transition:
     transform var(--dur-med) var(--ease-out),
     opacity var(--dur-med);
 }
 .pcard-bg {
-  fill: var(--card-face);
-}
-.pcard-back .pcard-bg {
-  fill: var(--paper-200);
-}
-.pcard-check {
-  fill: var(--ink-900);
+  fill: #fbf7ec;
 }
 .pcard-rank {
   font-family: var(--font-display);
-  font-size: 22px;
-  fill: var(--card-ink);
-}
-.pcard-court {
-  font-family: var(--font-display);
-  font-size: 54px;
+  font-weight: 650;
+  font-size: 19px;
   text-anchor: middle;
-  fill: var(--card-ink);
+  fill: var(--ink);
+  letter-spacing: -0.02em;
 }
-.pcard-red .pcard-rank,
-.pcard-red .pcard-court {
-  fill: var(--card-red);
+.pcard-rank-10 {
+  font-size: 16px;
+  letter-spacing: -0.06em;
+}
+.pcard-red .pcard-rank {
+  fill: var(--red-suit);
 }
 .card-suit {
-  fill: var(--suit-black);
+  fill: var(--ink);
 }
 .pcard-red .card-suit {
-  fill: var(--suit-red);
+  fill: var(--red-suit);
 }
-.pcard-hl {
-  filter: drop-shadow(0 0 6px var(--ochre-500)) drop-shadow(0 2px 2px rgba(0, 0, 0, 0.35));
-  transform: translateY(-6px);
+.pcard-frame {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1;
+  opacity: 0.35;
 }
-.pcard-dim {
-  opacity: 0.45;
+.pcard-black {
+  color: var(--ink);
+}
+.pcard-red {
+  color: var(--red-suit);
 }
 
-/* Distribuzione: la carta "arriva" dal centro del tavolo */
+/* Retro: campo verde con reticolo crema leggero */
+.pcard-back .pcard-bg {
+  fill: #f3eedf;
+}
+.pcard-back-field {
+  fill: var(--green-700);
+}
+.pcard-lattice {
+  stroke: rgba(246, 241, 227, 0.22);
+  stroke-width: 1;
+  fill: none;
+}
+
+.pcard-hl {
+  transform: translateY(-5px);
+  filter: drop-shadow(0 4px 6px rgba(5, 15, 12, 0.4));
+}
+.pcard-hl .pcard-bg {
+  stroke: var(--gold);
+  stroke-width: 3;
+}
+.pcard-dim {
+  opacity: 0.4;
+}
+
+/* Distribuzione: la carta arriva dall'alto e si posa */
 @keyframes card-deal {
   from {
-    transform: translate(0, -40px) scale(0.6) rotate(-8deg);
+    transform: translateY(-24px) scale(0.85);
     opacity: 0;
   }
   to {
@@ -57,5 +82,5 @@
   }
 }
 .pcard-deal {
-  animation: card-deal var(--dur-slow) var(--ease-spring) both;
+  animation: card-deal var(--dur-slow) var(--ease-out) both;
 }

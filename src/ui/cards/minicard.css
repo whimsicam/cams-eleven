@@ -1,0 +1,24 @@
+/* Carta in miniatura */
+.minicard {
+  filter: drop-shadow(0 1px 1px rgba(5, 15, 12, 0.3));
+  display: block;
+  flex: none;
+}
+.minicard-bg {
+  fill: #fbf7ec;
+}
+.minicard-rank {
+  font-family: var(--font-display);
+  font-weight: 650;
+  font-size: 14px;
+  text-anchor: middle;
+  fill: var(--ink);
+  letter-spacing: -0.04em;
+}
+.minicard-suit {
+  fill: var(--ink);
+}
+.minicard-red .minicard-rank,
+.minicard-red .minicard-suit {
+  fill: var(--red-suit);
+}

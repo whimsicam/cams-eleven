@@ -7,3 +7,6 @@ dev-dist/
 # Mai committare token o segreti
 .env
 .env.*
+
+# Skill di design scaricate da scripts/setup-skills.sh (non nel repo)
+.claude/skills/

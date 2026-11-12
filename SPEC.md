@@ -29,14 +29,14 @@ Obiettivo secondario: allenamento mentale (calcolo, probabilità, critical think
 
 ## 4. Struttura dell'app
 
-Uno **switch di gioco** in alto (nascosto finché esiste solo l'Hold'em) e quattro tab fisse, uguali per ogni gioco:
+Uno **switch di gioco** in alto (nascosto finché esiste solo l'Hold'em) e quattro tab fisse con nomi inglesi, uguali per ogni gioco:
 
 | Tab | Cosa fa |
 |---|---|
-| **Gioca** | Partite libere contro bot. Difficoltà: Facile, Medio, Difficile, Avanzato. Nessuna interruzione, nessun numero a schermo (come dal vivo). Il riepilogo di Danny è disponibile a fine mano, su richiesta. |
-| **Allenamento** | Due modalità. (a) *Partita assistita*: si gioca, ma Danny interviene con card contestuali nelle situazioni rilevanti, prima o dopo l'azione (impostazione), mostrando outs, equity, pot odds. (b) *Drill*: esercizi mirati a tempo (outs, pot odds, hand ranking, calcolo mentale, poi basic strategy e conteggio). A livelli. |
-| **Lezioni** | Prima le regole, poi situazioni precise e cosa fare. Organizzate a livelli con sblocco *consigliato* (mai obbligatorio). Ogni lezione finisce con un esercizio o una mano da giocare. |
-| **Progressi** | Cosa ho imparato, dove sbaglio di più, cosa ripassare (spaced repetition), statistiche di gioco, stato della sincronizzazione, impostazioni (token, regole, preferenze). |
+| **Play** | Partite libere contro bot. Difficoltà: Facile, Medio, Difficile, Avanzato. Nessuna interruzione, nessun numero a schermo (come dal vivo). Il riepilogo di Danny è disponibile a fine mano, su richiesta. |
+| **Training** | Due modalità. (a) *Partita assistita*: si gioca, ma Danny interviene con card contestuali nelle situazioni rilevanti, prima o dopo l'azione (impostazione), mostrando outs, equity, pot odds. (b) *Drill*: esercizi mirati a tempo (outs, pot odds, hand ranking, calcolo mentale, poi basic strategy e conteggio). A livelli. |
+| **Lessons** | Prima le regole, poi situazioni precise e cosa fare. Organizzate a livelli con sblocco *consigliato* (mai obbligatorio). Ogni lezione finisce con un esercizio o una mano da giocare. |
+| **Progress** | Cosa ho imparato, dove sbaglio di più, cosa ripassare (spaced repetition), statistiche di gioco, stato della sincronizzazione, impostazioni (token, regole, preferenze). |
 
 Il **Percorso** per ogni gioco è una sequenza di step: lezione → drill → partita assistita con obiettivo (es. "20 mani con accuracy ≥ 90 % sulle decisioni preflop"). Lo step successivo appare come "consigliato"; tutto resta accessibile.
 
@@ -186,17 +186,13 @@ Gli engine sono moduli TypeScript puri senza dipendenze dalla UI: girano nei tes
 
 ## 11. Design system
 
-Derivato dal poster di riferimento (`docs/reference/01-full-house.png`): poster editoriale, grafica piatta, griglia "blueprint", carte grandi e inclinate.
-
-**Token colore**: `--felt` verde scuro (fondo), `--felt-line` verde più chiaro (griglia), `--paper` crema (carte, testo), `--ink` nero (picche, fiori, testo su carta), `--coral` corallo (cuori, quadri, accento primario), `--ochre` giallo ocra (marker, badge), `--chip-*` per le fiche. Contrasto AA verificato.
-
-**Tipografia**: display grotesk pesante per titoli, grotesk regolare per testo, monospace per numeri e etichette tecniche (chip, pot, count). Numeri tabulari.
-
-**Componenti**: carta SVG (fronte con pips grandi, retro con pattern a scacchi), tavolo SVG, fiche, Danny card, pulsanti d'azione (altezza ≥ 48 px su iPhone, a tutta larghezza in basso), tab bar, slider per il bet sizing, badge di livello.
-
-**Animazioni**: distribuzione delle carte, flip, chip verso il piatto, evidenziazione del vincitore. Tutte disattivabili (`prefers-reduced-motion` e impostazione).
-
-**Layout**: mobile-first; su iPhone la mano dell'utente occupa la parte bassa, azioni sopra la safe area; su desktop tavolo centrato con pannello laterale per Danny.
+Documentato in `docs/design-system.md` (v2 dal 12/11/2026). In sintesi:
+- **Colori**: un verde desaturato per fondo e tavolo, crema per il testo, corallo solo per l'azione principale e i semi rossi, oro solo per il turno. Contrasti testati (`tests/ui/contrast.test.ts`).
+- **Font**: font di sistema (SF Pro) per testo e comandi, Bricolage Grotesque per titoli e numeri importanti.
+- **Carte**: semi simmetrici per costruzione e testati (`tests/ui/suits.test.ts`), figure con emblema simmetrico, carte in miniatura per lo showdown dei bot.
+- **Layout**: shell alta come lo schermo, tab bar sempre in fondo (barra laterale su desktop); in Play la tua mano sta sotto il tavolo e le azioni sotto la tua mano; classifica dei punti in un foglio dal basso.
+- **Danny** vivo come Beta di camstudy: occhi che seguono il cursore, reazioni al tocco, umore che segue la mano.
+- **Strumenti**: le skill impeccable e apple-design (scaricate da `scripts/setup-skills.sh`) per ogni lavoro sull'interfaccia; istruzioni in `CLAUDE.md`.
 
 ## 12. Qualità
 
@@ -247,3 +243,13 @@ VPIP (voluntarily put money in pot), PFR (preflop raise), c-bet (continuation be
 - Fatto: repo e struttura, CI (type-check, test, build) e deploy automatico su Pages, PWA installabile e offline, design system (`docs/design-system.md`), Danny in SVG, carte e tavolo SVG, engine Hold'em (puntate, side pot, showdown) con test fuzz, evaluator con oracolo enumerativo, shuffle con test chi-quadro, equity Monte Carlo ed esatta, tabella di equity preflop (169 mani, `data/holdem/preflop-equity.json`), bot Facile e Medio, tab Gioca e Progressi, storage locale, sync su branch `data` con coda offline.
 - Test: 49 passati in CI.
 - Rimandato alla Fase 2: tab Allenamento e Lezioni, Danny card del coach, pulsante "Chiedi a Claude", primi esperimenti del Laboratorio.
+
+### Revisione grafica dopo la Fase 1 (12/11/2026), su feedback di CAM
+- Layout mobile a schermo fisso: tab bar sempre in fondo, la tua mano non copre più i pulsanti, il pannello della puntata non finisce sotto la tab bar.
+- Tab con nomi inglesi: Play, Training, Lessons, Progress.
+- Scorciatoie della puntata in 5 colonne identiche.
+- Carte ridisegnate: semi simmetrici, fiori senza buchi, indice separato dai pips, figure simmetriche.
+- Classifica dei punti a tendina (pulsante "Punti" e tocco sul tuo punto attuale), con esempi verificati dall'evaluator.
+- Grafica alleggerita e nuovo font; Danny interattivo.
+- Test: 74 passati (nuovi: simmetria dei semi, contrasti, classifica dei punti).
+

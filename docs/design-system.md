@@ -1,57 +1,66 @@
 # Design system
 
-Derivato dal poster di riferimento in `docs/reference/01-full-house.png`: grafica piatta da poster editoriale, verde feltro, carte crema con pips grandi, accenti corallo e ocra, griglia "blueprint" sul fondo, etichette tecniche in monospace. Nessun logo o marchio: solo lo stile.
+Versione 2 (12/11/2026). Riferimento: `docs/reference/01-full-house.png` (verde feltro, crema, corallo, carte piatte). La v1 ne riprendeva tutto alla lettera (griglia di fondo, ocra ovunque, etichette monospace maiuscole, retro a scacchi neri) e risultava pesante: la v2 ne tiene i colori e la piattezza, e toglie il resto.
 
-I token vivono in `src/ui/styles/tokens.css` (CSS custom properties). Cambiare lì cambia tutta l'app.
+Principi:
+- **Un verde, un accento.** Il corallo indica solo l'azione principale, la tab attiva e i semi rossi. L'oro solo "tocca a te / tocca a lui".
+- **Il tavolo è il protagonista**, tutto il resto è sottovoce: superfici appena più chiare del fondo, bordi da 1 px, nessuna ombra pesante.
+- **Comandi come su iPhone**: tab bar in basso con 4 voci, touch target ≥ 44 pt, safe area rispettate, fogli che salgono dal basso (Apple HIG, skill apple-design).
 
-## Colori
+## Colori (`src/ui/styles/tokens.css`)
 
 | Token | Valore | Uso |
 |---|---|---|
-| `--felt-900 … --felt-600` | `#163a2c` → `#2f7358` | fondo, superfici, tavolo (più chiaro = più in rilievo) |
-| `--paper-100 … --paper-400` | `#fff7e0` → `#c9bb97` | carte, testo, testo attenuato |
-| `--ink-900` | `#161512` | picche, fiori, testo su carta, Danny |
-| `--coral-500` | `#f1623f` | cuori, quadri, azione primaria (Bet/Raise), tab attiva |
-| `--ochre-500` | `#e8b83a` | marker tecnici: piatto, stack, giocatore di turno, badge |
-| `--chip-*` | bianco / rosso / blu / verde / nero | fiche |
+| `--green-950` | #102520 | tab bar, campi di testo |
+| `--green-900` | #16302a | fondo dell'app |
+| `--green-850` | #1b3832 | pannelli, fogli, la tua mano |
+| `--green-800` | #20423a | feltro del tavolo |
+| `--green-700` | #2a5348 | retro delle carte |
+| `--paper` | #f6f1e3 | testo principale |
+| `--paper-dim` | #b8c4ba | testo secondario (tinto di verde, mai grigio) |
+| `--paper-faint` | #8fa298 | etichette brevi |
+| `--ink` | #17191a | semi neri e valori sulla carta |
+| `--red-suit` | #c93d24 | semi rossi sulla carta |
+| `--coral` | #f07253 | azione principale, tab attiva, fiches |
+| `--gold` | #e9c46a | turno |
+| `--win` / `--loss` | #8fd6a8 / #f29a86 | vinto / perso |
 
-Semantici: `--bg`, `--surface`, `--text`, `--text-muted`, `--accent`, `--warn`, `--ok`, `--danger`, `--card-face`, `--card-ink`, `--card-red`.
-
-Contrasto: testo crema su `--felt-800` ≈ 9:1; inchiostro su crema ≈ 16:1; corallo su crema ≈ 3,3:1 (usato solo per pips grandi e titoli, mai per testo piccolo).
+Contrasti verificati da `tests/ui/contrast.test.ts` (testo ≥ 4,5:1, simboli ≥ 3:1). Il rosso dei semi è stato scurito da #d2442a (4,26:1, insufficiente) a #c93d24 (4,70:1) proprio grazie a quel test.
 
 ## Tipografia
 
-- Display: **Archivo Black** (titoli, rank delle carte, figure).
-- Interfaccia: **Space Grotesk** 400/600/700.
-- Tecnica: **JetBrains Mono** (numeri, chip, etichette `label` maiuscole con letter-spacing 0,08 em).
+- **Testo e comandi**: font di sistema (SF Pro su iPhone e Mac). Nessun file da scaricare, ottima leggibilità, cifre tabulari (`font-variant-numeric: tabular-nums`) per stack e piatto.
+- **Display**: Bricolage Grotesque (variabile, self-hosted per l'offline) per titoli, stack della tua mano, importo della puntata e valori sulle carte. Peso 600–650, mai nero.
+- Scala: 12 · 14 · 16 (corpo) · 19 · 26 · 36 px.
+- Scartati: Archivo Black + Space Grotesk + JetBrains Mono della v1 (tre famiglie, il monospace usato come costume "tecnico").
 
-Tutti i font sono open source (SIL OFL), self-hosted via `@fontsource/*`, inclusi nel precache: funzionano offline.
+## Carte (`src/ui/cards/`)
 
-Scala: `--text-xs` 12 px → `--text-2xl` 40 px. Numeri sempre `tabular-nums` e in formato italiano (`src/ui/format.ts`).
+- **Semi simmetrici per costruzione** (`suits.ts`): ogni seme è disegnato solo nella metà destra e specchiato via codice; `tests/ui/suits.test.ts` verifica che ogni punto abbia il suo specchio. Tutte le forme sono tracciate in senso orario (con versi opposti le sovrapposizioni dei fiori si bucavano).
+- Indice d'angolo in una colonna stretta (x = 12), separata dai pips.
+- Pips nella disposizione delle carte francesi; la metà bassa è ruotata di 180°.
+- Figure: cornice, emblema (Re corona, Regina diadema, Fante berretto) in alto e capovolto in basso, seme al centro. Simmetriche a specchio e per rotazione.
+- Retro: verde con reticolo crema leggero.
+- `MiniCard`: valore e seme grandi in 30 × 40 px, per showdown dei bot ed esempi della classifica.
 
-## Componenti
+## Layout
 
-- **Carta** (`src/ui/cards/PlayingCard.tsx`): SVG 100×140, angoli 9, indice rank+seme negli angoli (anche ruotato), pips grandi disposti come nelle carte francesi, figure come lettera grande con il seme sotto, Asso come seme gigante. Retro a scacchi `--ink-900` su `--paper-200`. Stati: `highlight` (vincente), `dimmed` (foldata), animazione `pcard-deal`.
-- **Tavolo** (`src/ui/table/Table.tsx`): ovale con gradiente radiale, 6 seat in percentuale (utente sempre in basso), board e piatto al centro. Rapporto 3:4 su iPhone, 4:3 da 720 px in su.
-- **Seat**: targa scura con nome, stack in ocra, button "D", puntata della street con fiche; bordo ocra pulsante per chi deve agire, verde `--ok` per il vincitore.
-- **Barra azioni**: tre pulsanti alti 56 px (Fold scuro, Check/Call crema, Bet/Raise corallo); slider con scorciatoie min / ½ piatto / ¾ piatto / piatto / all-in.
-- **Danny** (`src/ui/danny/Danny.tsx`): la mascotte, cerchio nero con occhi bianchi, senza arti; espressioni: neutro, contento, ridente, sorpreso, pensoso, scettico, occhiolino, stellato, triste, ko. Respira, sbatte le palpebre, reagisce con `hop`/`wobble`.
-- **Pannello** `.panel`, **badge** `.badge` (ocra, mono), **etichetta** `.label`, pulsanti `.btn` (+ `-primary`, `-paper`, `-ghost`, `-block`), input `.input`.
-- **Tab bar**: fissa in basso su iPhone (sopra la safe area), in alto su desktop.
+- **Shell**: griglia alta come lo schermo; la tab bar è una riga della griglia, non un elemento fisso, quindi resta sempre in fondo e la pagina non scorre mai. Su schermi ≥ 900 px la tab bar diventa una barra laterale.
+- **Play**: barra in alto (uscita, livello e mano, risultato della sessione, Danny, "Punti") → tavolo (prende lo spazio rimanente) → la tua mano (carte grandi, stack, posizione, punto attuale) → azioni. Le tue carte non stanno sul tavolo, così non coprono mai i pulsanti.
+- **Puntata**: il pannello sostituisce la riga Fold/Call/Raise (non si sovrappone alla tab bar): importo, slider, 5 scorciatoie in colonne identiche (Min · ½ pot · ¾ pot · Pot · All-in), Annulla e conferma.
+- **Classifica dei punti**: foglio dal basso, si chiude toccando fuori, con la X, trascinandolo giù o con Esc; evidenzia il tuo punto attuale.
+- Verificato a 390 × 844 (iPhone 13/14), 375 × 667 (iPhone SE) e 1366 × 860 (desktop).
 
-## Touch e accessibilità
+## Danny (`src/ui/danny/`)
 
-- Target minimi 48 px (`--tap`); azioni di gioco 56 px.
-- `viewport-fit=cover` e `env(safe-area-inset-*)` per iPhone con notch; `apple-mobile-web-app-capable` per lo schermo intero dalla Home.
-- `prefers-reduced-motion`: tutte le durate a 0 e Danny fermo.
-- Niente selezione del testo sul tavolo (`user-select: none`), tranne negli input.
+Cerchio nero, occhi bianchi, riflesso; niente arti. Come Beta di camstudy:
+- gli occhi seguono mouse e dito (un solo listener globale);
+- sbatte le palpebre ogni 3–7 s, ogni tanto saltella da solo;
+- al tocco reagisce a caso per 1,6 s: contento e salta, arrabbiato e trema, occhi a stella e balla, KO e gira…;
+- in partita segue la mano: pensoso quando tocca a te, contento o a stella se vinci, triste se perdi.
+Nella barra in alto sta su un alone chiaro, altrimenti nero su verde scuro si perde.
+Le sue animazioni usano un easing elastico: il detector di impeccable lo segnala come avviso, è una scelta voluta (è il carattere della mascotte) ed è limitato a lui.
 
 ## Animazioni
 
-| Nome | Durata | Dove |
-|---|---|---|
-| `card-deal` | `--dur-slow` 480 ms, `--ease-spring` | arrivo delle carte (ritardo 90 ms tra le due hole card) |
-| `seat-pulse` | 1,2 s loop | bordo del giocatore di turno |
-| `danny-breathe` / `danny-blink` / `danny-hop` / `danny-wobble` | 3,6 s / 180 ms / 700 ms / 800 ms | Danny |
-
-Da fare nelle fasi successive: fiche che volano verso il piatto, flip delle carte allo showdown, transizione fra le street.
+Brevi e funzionali: carte che si posano (420 ms, ease-out), fogli che salgono, cambio di stato dei pulsanti. Tutte azzerate con "Riduci movimento".
